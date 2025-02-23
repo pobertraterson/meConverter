@@ -17,3 +17,7 @@ Kheder Tallaa: Lead Developer (Gif side)
 Muhammed Ibrahim: Team Member
 
 Abdul Rehman Ibn-E-Ali: Team Member
+
+# Warnings
+The current version of the project will only start specifically what it says it will do in the Main.java file. So if (for now) if you want to encode a specific file, you will need to point to the path of the file in the Main.java file.
+There will be some example files added.
