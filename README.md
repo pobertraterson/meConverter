@@ -12,7 +12,7 @@ Zaid Faisal: Team Leader
 
 [Oliver Strange](https://github.com/oliverdanielstrange): Developer (ffmpeg side)
 
-Kheder Tallaa: Lead Developer (Gif side)
+Kheder Tallaa: Developer (Gif side)
 
 Muhammed Ibrahim: Team Member
 
