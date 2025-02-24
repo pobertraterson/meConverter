@@ -3,7 +3,7 @@
 Part of the Team Project for my University Course.
 
 ## Info
-Using [bramp/ffmpeg-cli-wrapper](https://github.com/bramp/ffmpeg-cli-wrapper)
+Using [bramp/ffmpeg-cli-wrapper](https://github.com/bramp/ffmpeg-cli-wrapper) (and other library I forgot, I have not got the code for the gif side yet)
 ## The Team
 
 Zaid Faisal: Team Leader
@@ -21,3 +21,5 @@ Abdul Rehman Ibn-E-Ali: Team Member
 # Warnings
 The current version of the project will only start specifically what it says it will do in the Main.java file. So if (for now) if you want to encode a specific file, you will need to point to the path of the file in the Main.java file.
 There will be some example files added.
+
+This project is still in development and is not finished. Issues and unexpected behaviour ahead.
