@@ -4,8 +4,8 @@
   <groupId>uk.co.mediumeffortmedia</groupId>
   <artifactId>meConverter</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Archetype - meConverter</name>
-  <url>http://maven.apache.org</url>
+  <name>The Medium Effort Converter</name>
+  <url>https://mediumeffortmedia.co.uk</url>
   <developers>
     <developer>
       <id>pobertraterson</id>
