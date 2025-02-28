@@ -23,3 +23,8 @@ The current version of the project will only start specifically what it says it 
 There will be some example files added.
 
 This project is still in development and is not finished. Issues and unexpected behaviour ahead.
+
+# Building
+To build, you will need to download [Maven](https://maven.apache.org/). Read the documentation on how to build using Maven.
+
+Made with love by the team (Medium Effort Solutions)
