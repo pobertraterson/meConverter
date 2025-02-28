@@ -26,5 +26,6 @@ This project is still in development and is not finished. Issues and unexpected 
 
 # Building
 To build, you will need to download [Maven](https://maven.apache.org/). Read the documentation on how to build using Maven.
+Requires Java 17 or newer. [Link to Java 23 and Java 21 (Long-term support) from Oracle.](https://www.oracle.com/uk/java/technologies/downloads/#java23)
 
 Made with love by the team (Medium Effort Solutions)
