@@ -4,10 +4,14 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.*;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import java.io.IOException;
-import org.openjfx.*;
+import javafx.application.Application;
+import javafx.stage.*;
+import javafx.fxml.*;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void worker() throws IOException {
         System.out.println("The Medium Effort Converter:meConverter");
 
         FFmpeg ffmpeg = new FFmpeg("/opt/homebrew/Cellar/ffmpeg/7.1_4/bin/ffmpeg");
@@ -31,5 +35,8 @@ public class Main {
 
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
         executor.createJob(builder).run();
+    }
+    public static void main(String[] args) {
+        
     }
 }
