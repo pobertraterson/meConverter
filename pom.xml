@@ -76,6 +76,11 @@
       <artifactId>javafx-media</artifactId>
       <version>21.0.6</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>21.0.6</version>
+    </dependency>
   </dependencies>
 
   <properties>
@@ -100,7 +105,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Main-Class>uk.co.mediumeffortmedia.Main</Main-Class>
+              <Main-Class>uk.co.mediumeffortmedia.FXLoader</Main-Class>
             </manifestEntries>
           </archive>
           <descriptorRefs>
