@@ -1,6 +1,7 @@
 package uk.co.mediumeffortmedia;
 
 import javafx.application.Application;
+import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +13,7 @@ public class FXWorker extends Application{
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("blank.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainScreen.fxml"));
         Parent root = loader.load();
 
         Scene scene = new Scene(root, 1024, 576);
@@ -20,6 +21,8 @@ public class FXWorker extends Application{
         stage.setTitle("meConverter");
         stage.setScene(scene);
         stage.show();
+
+
     }
 
     public static void main(String[] args) {
