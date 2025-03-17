@@ -43,17 +43,12 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>21.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-fxml</artifactId>
-      <version>21.0.5</version>
+      <version>21.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
-      <version>21.0.5</version>
+      <version>21.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -63,12 +58,12 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
-      <version>21.0.5</version>
+      <version>21.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx</artifactId>
-      <version>21.0.5</version>
+      <version>21.0.6</version>
       <type>pom</type>
     </dependency>
     <dependency>
@@ -81,8 +76,12 @@
       <artifactId>javafx-web</artifactId>
       <version>21.0.6</version>
     </dependency>
+    <dependency>
+      <groupId>com.dlsc.formsfx</groupId>
+      <artifactId>formsfx-core</artifactId>
+      <version>11.6.0</version>
+    </dependency>
   </dependencies>
-
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
