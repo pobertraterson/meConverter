@@ -1,4 +1,6 @@
 package uk.co.mediumeffortmedia;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.stage.*;
 import javafx.scene.Parent;
@@ -16,6 +18,13 @@ public class FXWorker extends Application {
         openFile.setText("Open File");
         openFile.setTranslateX(50);
         openFile.setTranslateY(200);
+        Stage finalStage = stage;
+        openFile.setOnAction(actionEvent -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Media File");
+            fileChooser.showOpenDialog(finalStage);
+        });
+
 
         Group root = new Group(openFile);
         Scene scene = new Scene(root,1024,576);
