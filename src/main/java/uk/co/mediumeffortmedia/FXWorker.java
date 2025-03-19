@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.scene.control.*;
 
 import java.io.File;
+import java.util.function.UnaryOperator;
 
 public class FXWorker extends Application {
 
@@ -19,6 +20,11 @@ public class FXWorker extends Application {
 //            System.setProperty("apple.laf.useScreenMenuBar", "true");
 //            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
 //        }
+        /// Variables for use across start function
+        boolean lossyCompressionSelected;
+        boolean losslessCompressionSelected;
+        boolean uncompressedSelected;
+
 
         /// Video Options section
         Label videoOptionsLabel = new Label("Video options");
@@ -80,8 +86,6 @@ public class FXWorker extends Application {
         aCodecList.setTranslateX(30);
         aCodecList.setTranslateY(230);
 
-        /// Test comment for oliver's machine
-
         Label audioCompressionType = new Label();
         audioCompressionType.setTranslateX(30);
         audioCompressionType.setTranslateY(260);
@@ -95,6 +99,29 @@ public class FXWorker extends Application {
                 audioCompressionType.setText("Uncompressed audio");
             }
         });
+
+        Label audioQualityLabel = new Label("Audio quality");
+        audioQualityLabel.setTranslateX(30);
+        audioQualityLabel.setTranslateY(280);
+
+        /// Audio Options for lossy compression types
+        TextField lossyCompressionBitrate = new TextField();
+        lossyCompressionBitrate.setTextFormatter(new javafx.scene.control.TextFormatter<String>(
+                (UnaryOperator<TextFormatter.Change>) change -> {
+                    // Only allow digits (0-9)
+                    if (change.getText().matches("[0-9]*")) {
+                        return change;
+                    }
+                    return null; // Reject the change if it's not a digit
+                })
+        );
+        lossyCompressionBitrate.setTranslateX(30);
+        lossyCompressionBitrate.setTranslateY(300);
+        lossyCompressionBitrate.setPrefWidth(80);
+
+        Label audioBitrateLabel = new Label("kB/s");
+        audioBitrateLabel.setTranslateX(120);
+        audioBitrateLabel.setTranslateY(300);
 
 
 
@@ -169,7 +196,10 @@ public class FXWorker extends Application {
                 vQuality,
                 aCodecList,
                 audioCompressionType,
-                audioOptionsLabel);
+                audioOptionsLabel,
+                audioQualityLabel,
+                lossyCompressionBitrate,
+                audioBitrateLabel);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
