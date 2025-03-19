@@ -1,5 +1,7 @@
 package uk.co.mediumeffortmedia;
+import javafx.collections.FXCollections;
 import javafx.scene.Group;
+import javafx.scene.text.Font;
 import javafx.stage.*;
 import javafx.scene.Scene;
 import javafx.application.Application;
@@ -11,6 +13,39 @@ public class FXWorker extends Application {
 
     @Override
     public void start(Stage stage) {
+
+
+
+        /// Video Options section
+        Label videoOptionsLabel = new Label("Video options");
+        videoOptionsLabel.setTranslateX(30);
+        videoOptionsLabel.setTranslateY(50);
+        videoOptionsLabel.setFont(new Font("Arial",15));
+
+        String[] videoCodecs = {"libx264","libx265","MPEG4","mpeg2video"};
+        ComboBox vCodecList = new ComboBox(FXCollections.observableArrayList(videoCodecs));
+        vCodecList.setPromptText("Select codec");
+        vCodecList.setTranslateX(30);
+        vCodecList.setTranslateY(80);
+
+        Label bestFor = new Label();
+        bestFor.setTranslateX(30);
+        bestFor.setTranslateY(110);
+
+        vCodecList.setOnAction(actionEvent -> {
+            if (vCodecList.getValue() == "libx264") {
+                bestFor.setText("Best for most applications");
+            } else if (vCodecList.getValue() == "libx265") {
+                bestFor.setText("Best for space saving");
+            } else if (vCodecList.getValue() == "MPEG4") {
+                bestFor.setText("Best for older devices & apps");
+            } else if (vCodecList.getValue() == "mpeg2video") {
+                bestFor.setText("Best for DVDs");
+            }
+        });
+
+
+        /// Audio options section
 
         TextField fileToConvertText = new TextField();
         fileToConvertText.setPrefWidth(400);
@@ -68,7 +103,7 @@ public class FXWorker extends Application {
             }
         });
 
-        Group root = new Group(openFile,fileToConvertText,openFFMPEG,ffmpegPathTextBox);
+        Group root = new Group(openFile,fileToConvertText,openFFMPEG,ffmpegPathTextBox,videoOptionsLabel,vCodecList,bestFor);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
