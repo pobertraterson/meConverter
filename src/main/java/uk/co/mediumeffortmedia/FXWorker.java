@@ -14,8 +14,6 @@ public class FXWorker extends Application {
     @Override
     public void start(Stage stage) {
 
-
-
         /// Video Options section
         Label videoOptionsLabel = new Label("Video options");
         videoOptionsLabel.setTranslateX(30);
@@ -44,8 +42,71 @@ public class FXWorker extends Application {
             }
         });
 
+        Slider videoQualitySlider = new Slider(0,30,20);
+        videoQualitySlider.setTranslateX(30);
+        videoQualitySlider.setTranslateY(130);
+        videoQualitySlider.setShowTickMarks(true);
+        videoQualitySlider.setShowTickLabels(true);
+        videoQualitySlider.setBlockIncrement(1);
+        videoQualitySlider.setSnapToTicks(true);
+        videoQualitySlider.setMajorTickUnit(1);
+        videoQualitySlider.setMinorTickCount(0);
+
+        Label vQualitySliderWarning = new Label("Lower number means better quality");
+        vQualitySliderWarning.setTranslateX(30);
+        vQualitySliderWarning.setTranslateY(165);
+
+        Label vQuality = new Label("Quality: 20");
+        vQuality.setTranslateX(180);
+        vQuality.setTranslateY(130);
+
+        videoQualitySlider.valueProperty().addListener((observable, oldValue, newValue) -> vQuality.setText("Quality: " + newValue.intValue()));
 
         /// Audio options section
+        Label audioOptionsLabel = new Label("Audio options");
+        audioOptionsLabel.setTranslateX(30);
+        audioOptionsLabel.setTranslateY(200);
+//        audioOptionsLabel.setFont(new Font("Arial",15));
+
+        String[] audioCodecs = {"mp3","aac","ogg","opus","flac","alac","wav","aiff","24-bit wav","24-bit aiff"};
+        ComboBox aCodecList = new ComboBox(FXCollections.observableArrayList(audioCodecs));
+        aCodecList.setPromptText("Select codec");
+        aCodecList.setTranslateX(30);
+        aCodecList.setTranslateY(230);
+
+        Label audioCompressionType = new Label();
+        audioCompressionType.setTranslateX(30);
+        audioCompressionType.setTranslateY(260);
+
+        aCodecList.setOnAction(actionEvent -> {
+            if (aCodecList.getValue() == "mp3" || aCodecList.getValue() == "aac" || aCodecList.getValue() == "ogg" || aCodecList.getValue() == "opus") {
+                audioCompressionType.setText("Lossy, low quality compression");
+            } else if (aCodecList.getValue() == "flac" || aCodecList.getValue() == "alac") {
+                audioCompressionType.setText("Lossless, high quality compression");
+            } else if (aCodecList.getValue() == "wav" || aCodecList.getValue() == "aiff" || aCodecList.getValue() == "24-bit wav" || aCodecList.getValue() == "24-bit aiff") {
+                audioCompressionType.setText("Uncompressed audio");
+            }
+        });
+
+//        Slider videoQualitySlider = new Slider(0,30,20);
+//        videoQualitySlider.setTranslateX(30);
+//        videoQualitySlider.setTranslateY(130);
+//        videoQualitySlider.setShowTickMarks(true);
+//        videoQualitySlider.setShowTickLabels(true);
+//        videoQualitySlider.setBlockIncrement(1);
+//        videoQualitySlider.setSnapToTicks(true);
+//        videoQualitySlider.setMajorTickUnit(1);
+//        videoQualitySlider.setMinorTickCount(0);
+
+//        Label vQualitySliderWarning = new Label("Lower number means better quality");
+//        vQualitySliderWarning.setTranslateX(30);
+//        vQualitySliderWarning.setTranslateY(165);
+//
+//        Label vQuality = new Label("Quality: 20");
+//        vQuality.setTranslateX(180);
+//        vQuality.setTranslateY(130);
+
+//        videoQualitySlider.valueProperty().addListener((observable, oldValue, newValue) -> vQuality.setText("Quality: " + newValue.intValue()));
 
         TextField fileToConvertText = new TextField();
         fileToConvertText.setPrefWidth(400);
@@ -103,7 +164,19 @@ public class FXWorker extends Application {
             }
         });
 
-        Group root = new Group(openFile,fileToConvertText,openFFMPEG,ffmpegPathTextBox,videoOptionsLabel,vCodecList,bestFor);
+        Group root = new Group(openFile,
+                fileToConvertText,
+                openFFMPEG,
+                ffmpegPathTextBox,
+                videoOptionsLabel,
+                vCodecList,
+                bestFor,
+                videoQualitySlider,
+                vQualitySliderWarning,
+                vQuality,
+                aCodecList,
+                audioCompressionType,
+                audioOptionsLabel);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
