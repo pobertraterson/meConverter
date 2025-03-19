@@ -14,6 +14,12 @@ public class FXWorker extends Application {
     @Override
     public void start(Stage stage) {
 
+        ///  Mac specific code for menu bar
+//        if (System.getProperty("os.name").contains("Mac")) {
+//            System.setProperty("apple.laf.useScreenMenuBar", "true");
+//            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
+//        }
+
         /// Video Options section
         Label videoOptionsLabel = new Label("Video options");
         videoOptionsLabel.setTranslateX(30);
@@ -74,6 +80,8 @@ public class FXWorker extends Application {
         aCodecList.setTranslateX(30);
         aCodecList.setTranslateY(230);
 
+        /// Test comment for oliver's machine
+
         Label audioCompressionType = new Label();
         audioCompressionType.setTranslateX(30);
         audioCompressionType.setTranslateY(260);
@@ -88,26 +96,11 @@ public class FXWorker extends Application {
             }
         });
 
-//        Slider videoQualitySlider = new Slider(0,30,20);
-//        videoQualitySlider.setTranslateX(30);
-//        videoQualitySlider.setTranslateY(130);
-//        videoQualitySlider.setShowTickMarks(true);
-//        videoQualitySlider.setShowTickLabels(true);
-//        videoQualitySlider.setBlockIncrement(1);
-//        videoQualitySlider.setSnapToTicks(true);
-//        videoQualitySlider.setMajorTickUnit(1);
-//        videoQualitySlider.setMinorTickCount(0);
 
-//        Label vQualitySliderWarning = new Label("Lower number means better quality");
-//        vQualitySliderWarning.setTranslateX(30);
-//        vQualitySliderWarning.setTranslateY(165);
-//
-//        Label vQuality = new Label("Quality: 20");
-//        vQuality.setTranslateX(180);
-//        vQuality.setTranslateY(130);
 
-//        videoQualitySlider.valueProperty().addListener((observable, oldValue, newValue) -> vQuality.setText("Quality: " + newValue.intValue()));
+        ///  Main Converter Bits
 
+        ///  File Path stuff
         TextField fileToConvertText = new TextField();
         fileToConvertText.setPrefWidth(400);
         fileToConvertText.setTranslateX(280);
