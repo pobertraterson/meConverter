@@ -131,20 +131,12 @@ public class FXWorker extends Application {
         radioButton16Bit.setToggleGroup(bitSampleGroup);
         radioButton24Bit.setToggleGroup(bitSampleGroup);
 
-        TextField audioSampleRate = new TextField();
-        audioSampleRate.setTextFormatter(new javafx.scene.control.TextFormatter<String>(
-                change -> {
-                    // Only allow digits (0-9)
-                    if (change.getText().matches("[0-9]*")) {
-                        return change;
-                    }
-                    return null; // Reject the change if it's not a digit
-                })
-        );
-        audioSampleRate.setTranslateX(30);
-        audioSampleRate.setTranslateY(340);
-        audioBitrateLabel.setPrefWidth(80);
-        audioSampleRate.setVisible(false);
+        String[] sampleRatesArray = {"44.1kHz","48kHz","88.2kHz","96kHz"};
+        ComboBox sampleRates = new ComboBox(FXCollections.observableArrayList(sampleRatesArray));
+        sampleRates.setPromptText("Select sample rate");
+        sampleRates.setTranslateX(30);
+        sampleRates.setTranslateY(340);
+        sampleRates.setVisible(false);
 
 
 
@@ -160,7 +152,7 @@ public class FXWorker extends Application {
                         lossyCompressionBitrate.setVisible(true);
                         radioButton16Bit.setVisible(false);
                         radioButton24Bit.setVisible(false);
-                        audioSampleRate.setVisible(false);
+                        sampleRates.setVisible(false);
                         audioCompressionType.setText(audioCompressionTypeNotes[0]);
                         break;
                     case "flac":
@@ -171,7 +163,7 @@ public class FXWorker extends Application {
                         radioButton24Bit.setVisible(true);
                         radioButton16Bit.setDisable(false);
                         radioButton24Bit.setDisable(false);
-                        audioSampleRate.setVisible(true);
+                        sampleRates.setVisible(true);
                         audioCompressionType.setText(audioCompressionTypeNotes[1]);
                         break;
                     case "wav":
@@ -184,7 +176,7 @@ public class FXWorker extends Application {
                         radioButton24Bit.setVisible(true);
                         radioButton16Bit.setDisable(true);
                         radioButton24Bit.setDisable(true);
-                        audioSampleRate.setVisible(true);
+                        sampleRates.setVisible(true);
                         audioCompressionType.setText(audioCompressionTypeNotes[2]);
                         break;
                 }
@@ -226,6 +218,11 @@ public class FXWorker extends Application {
         ffmpegPathTextBox.setTranslateY(476);
         ffmpegPathTextBox.setEditable(false);
 
+        Label ffmpegNotDetected = new Label("FFMPEG executable not detected in selected directory. Please try again");
+        ffmpegNotDetected.setTranslateX(280);
+        ffmpegNotDetected.setTranslateY(506);
+        ffmpegNotDetected.setVisible(false);
+
         Button openFFMPEG = new Button();
         openFFMPEG.setText("Open ffmpeg");
         openFFMPEG.setTranslateX(680);
@@ -245,8 +242,10 @@ public class FXWorker extends Application {
                 ffmpegDirectoryValidator = new File(ffmpegDirectory, ffmpegValidator);
                 if (ffmpegDirectoryValidator.exists()) {
                     ffmpegPathTextBox.setText(ffmpegDirectory.getAbsolutePath());
+                    ffmpegNotDetected.setVisible(false);
                 } else {
                     System.out.println("ffmpeg executable not detected in directory.");
+                    ffmpegNotDetected.setVisible(true);
                 }
             }
         });
@@ -269,7 +268,8 @@ public class FXWorker extends Application {
                 audioBitrateLabel,
                 radioButton16Bit,
                 radioButton24Bit,
-                audioSampleRate);
+                sampleRates,
+                ffmpegNotDetected);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
