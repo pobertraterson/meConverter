@@ -116,7 +116,7 @@ public class FXWorker extends Application {
         audioBitrateLabel.setTranslateY(300);
         audioBitrateLabel.setVisible(false);
 
-        /// Audio Options for lossless compression types
+        /// Audio Options for lossless compression & uncompressed audio types
         RadioButton radioButton16Bit = new RadioButton("16-bit");
         RadioButton radioButton24Bit = new RadioButton("24-bit");
         radioButton16Bit.setTranslateX(30);
