@@ -1,4 +1,5 @@
 package uk.co.mediumeffortmedia;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Group;
 import javafx.scene.text.Font;
@@ -8,9 +9,11 @@ import javafx.application.Application;
 import javafx.scene.control.*;
 
 import java.io.File;
-import java.util.function.UnaryOperator;
+
 
 public class FXWorker extends Application {
+
+    /// Variables for use across start function
 
     @Override
     public void start(Stage stage) {
@@ -20,11 +23,6 @@ public class FXWorker extends Application {
 //            System.setProperty("apple.laf.useScreenMenuBar", "true");
 //            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
 //        }
-        /// Variables for use across start function
-        boolean lossyCompressionSelected;
-        boolean losslessCompressionSelected;
-        boolean uncompressedSelected;
-
 
         /// Video Options section
         Label videoOptionsLabel = new Label("Video options");
@@ -86,19 +84,12 @@ public class FXWorker extends Application {
         aCodecList.setTranslateX(30);
         aCodecList.setTranslateY(230);
 
+
+        String[] audioCompressionTypeNotes = {"Lossy compression, lower quality","Lossless compression, higher quality","Uncompressed, high quality"};
         Label audioCompressionType = new Label();
         audioCompressionType.setTranslateX(30);
         audioCompressionType.setTranslateY(260);
 
-        aCodecList.setOnAction(actionEvent -> {
-            if (aCodecList.getValue() == "mp3" || aCodecList.getValue() == "aac" || aCodecList.getValue() == "ogg" || aCodecList.getValue() == "opus") {
-                audioCompressionType.setText("Lossy, low quality compression");
-            } else if (aCodecList.getValue() == "flac" || aCodecList.getValue() == "alac") {
-                audioCompressionType.setText("Lossless, high quality compression");
-            } else if (aCodecList.getValue() == "wav" || aCodecList.getValue() == "aiff" || aCodecList.getValue() == "24-bit wav" || aCodecList.getValue() == "24-bit aiff") {
-                audioCompressionType.setText("Uncompressed audio");
-            }
-        });
 
         Label audioQualityLabel = new Label("Audio quality");
         audioQualityLabel.setTranslateX(30);
@@ -107,7 +98,7 @@ public class FXWorker extends Application {
         /// Audio Options for lossy compression types
         TextField lossyCompressionBitrate = new TextField();
         lossyCompressionBitrate.setTextFormatter(new javafx.scene.control.TextFormatter<String>(
-                (UnaryOperator<TextFormatter.Change>) change -> {
+                change -> {
                     // Only allow digits (0-9)
                     if (change.getText().matches("[0-9]*")) {
                         return change;
@@ -123,6 +114,35 @@ public class FXWorker extends Application {
         audioBitrateLabel.setTranslateX(120);
         audioBitrateLabel.setTranslateY(300);
 
+        aCodecList.valueProperty().addListener((ChangeListener<String>) (observable, oldValue, newValue) -> {
+            // switch statement for efficiency (I felt bad for using if/else over and over)
+            if (newValue != null) {
+                switch (newValue) {
+                    case "aac":
+                    case "mp3":
+                    case "ogg":
+                    case "opus":
+                        audioBitrateLabel.setVisible(true);
+                        lossyCompressionBitrate.setVisible(true);
+                        audioCompressionType.setText(audioCompressionTypeNotes[0]);
+                        break;
+                    case "flac":
+                    case "alac":
+                        audioBitrateLabel.setVisible(false);
+                        lossyCompressionBitrate.setVisible(false);
+                        audioCompressionType.setText(audioCompressionTypeNotes[1]);
+                        break;
+                    case "wav":
+                    case "aiff":
+                    case "24-bit wav":
+                    case "24-bit aiff":
+                        audioBitrateLabel.setVisible(false);
+                        lossyCompressionBitrate.setVisible(false);
+                        audioCompressionType.setText(audioCompressionTypeNotes[2]);
+                        break;
+                }
+            }
+        });
 
 
         ///  Main Converter Bits
