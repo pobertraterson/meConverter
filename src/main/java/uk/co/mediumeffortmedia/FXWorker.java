@@ -109,10 +109,44 @@ public class FXWorker extends Application {
         lossyCompressionBitrate.setTranslateX(30);
         lossyCompressionBitrate.setTranslateY(300);
         lossyCompressionBitrate.setPrefWidth(80);
+        lossyCompressionBitrate.setVisible(false);
 
         Label audioBitrateLabel = new Label("kB/s");
         audioBitrateLabel.setTranslateX(120);
         audioBitrateLabel.setTranslateY(300);
+        audioBitrateLabel.setVisible(false);
+
+        /// Audio Options for lossless compression types
+        RadioButton radioButton16Bit = new RadioButton("16-bit");
+        RadioButton radioButton24Bit = new RadioButton("24-bit");
+        radioButton16Bit.setTranslateX(30);
+        radioButton16Bit.setTranslateY(300);
+        radioButton24Bit.setTranslateX(100);
+        radioButton24Bit.setTranslateY(300);
+        radioButton16Bit.setVisible(false);
+        radioButton24Bit.setVisible(false);
+
+
+        ToggleGroup bitSampleGroup = new ToggleGroup();
+        radioButton16Bit.setToggleGroup(bitSampleGroup);
+        radioButton24Bit.setToggleGroup(bitSampleGroup);
+
+        TextField audioSampleRate = new TextField();
+        audioSampleRate.setTextFormatter(new javafx.scene.control.TextFormatter<String>(
+                change -> {
+                    // Only allow digits (0-9)
+                    if (change.getText().matches("[0-9]*")) {
+                        return change;
+                    }
+                    return null; // Reject the change if it's not a digit
+                })
+        );
+        audioSampleRate.setTranslateX(30);
+        audioSampleRate.setTranslateY(340);
+        audioBitrateLabel.setPrefWidth(80);
+        audioSampleRate.setVisible(false);
+
+
 
         aCodecList.valueProperty().addListener((ChangeListener<String>) (observable, oldValue, newValue) -> {
             // switch statement for efficiency (I felt bad for using if/else over and over)
@@ -124,12 +158,20 @@ public class FXWorker extends Application {
                     case "opus":
                         audioBitrateLabel.setVisible(true);
                         lossyCompressionBitrate.setVisible(true);
+                        radioButton16Bit.setVisible(false);
+                        radioButton24Bit.setVisible(false);
+                        audioSampleRate.setVisible(false);
                         audioCompressionType.setText(audioCompressionTypeNotes[0]);
                         break;
                     case "flac":
                     case "alac":
                         audioBitrateLabel.setVisible(false);
                         lossyCompressionBitrate.setVisible(false);
+                        radioButton16Bit.setVisible(true);
+                        radioButton24Bit.setVisible(true);
+                        radioButton16Bit.setDisable(false);
+                        radioButton24Bit.setDisable(false);
+                        audioSampleRate.setVisible(true);
                         audioCompressionType.setText(audioCompressionTypeNotes[1]);
                         break;
                     case "wav":
@@ -138,6 +180,11 @@ public class FXWorker extends Application {
                     case "24-bit aiff":
                         audioBitrateLabel.setVisible(false);
                         lossyCompressionBitrate.setVisible(false);
+                        radioButton16Bit.setVisible(true);
+                        radioButton24Bit.setVisible(true);
+                        radioButton16Bit.setDisable(true);
+                        radioButton24Bit.setDisable(true);
+                        audioSampleRate.setVisible(true);
                         audioCompressionType.setText(audioCompressionTypeNotes[2]);
                         break;
                 }
@@ -219,7 +266,10 @@ public class FXWorker extends Application {
                 audioOptionsLabel,
                 audioQualityLabel,
                 lossyCompressionBitrate,
-                audioBitrateLabel);
+                audioBitrateLabel,
+                radioButton16Bit,
+                radioButton24Bit,
+                audioSampleRate);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
