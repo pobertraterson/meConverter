@@ -35,12 +35,16 @@ public class FXWorker extends Application {
         MenuBar menuBar = new MenuBar();
         if (System.getProperty("os.name") != null && System.getProperty("os.name").startsWith("Mac")) {
             menuBar.useSystemMenuBarProperty().set(true);
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
         }
         Menu options = new Menu("Options");
         MenuItem ffmpegDownload = new MenuItem("Download FFMPEG");
         ffmpegDownload.setOnAction(e -> getHostServices().showDocument("https://www.ffmpeg.org/download.html"));
         options.getItems().addAll(ffmpegDownload);
         menuBar.getMenus().addAll(options);
+        menuBar.setPrefWidth(1024);
+        menuBar.setTranslateX(0);
+        menuBar.setTranslateY(0);
 
         /// Video Options section
         Label videoOptionsLabel = new Label("Video options");
