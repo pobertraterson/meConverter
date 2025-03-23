@@ -14,6 +14,14 @@ import java.io.File;
 public class FXWorker extends Application {
 
     /// Variables for use across start function
+    String ffmpegValidator;
+    File ffmpegDirectoryValidator;
+    File ffmpegDirectory;
+    File fileToConvert;
+    ComboBox sampleRates;
+    ComboBox vCodecList;
+    ComboBox aCodecList;
+    ToggleGroup bitSampleGroup;
 
     @Override
     public void start(Stage stage) {
@@ -24,6 +32,16 @@ public class FXWorker extends Application {
 //            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
 //        }
 
+        MenuBar menuBar = new MenuBar();
+        if (System.getProperty("os.name") != null && System.getProperty("os.name").startsWith("Mac")) {
+            menuBar.useSystemMenuBarProperty().set(true);
+        }
+        Menu options = new Menu("Options");
+        MenuItem ffmpegDownload = new MenuItem("Download FFMPEG");
+        ffmpegDownload.setOnAction(e -> getHostServices().showDocument("https://www.ffmpeg.org/download.html"));
+        options.getItems().addAll(ffmpegDownload);
+        menuBar.getMenus().addAll(options);
+
         /// Video Options section
         Label videoOptionsLabel = new Label("Video options");
         videoOptionsLabel.setTranslateX(30);
@@ -31,7 +49,7 @@ public class FXWorker extends Application {
         videoOptionsLabel.setFont(new Font("Arial",15));
 
         String[] videoCodecs = {"libx264","libx265","MPEG4","mpeg2video"};
-        ComboBox vCodecList = new ComboBox(FXCollections.observableArrayList(videoCodecs));
+        vCodecList = new ComboBox(FXCollections.observableArrayList(videoCodecs));
         vCodecList.setPromptText("Select codec");
         vCodecList.setTranslateX(30);
         vCodecList.setTranslateY(80);
@@ -79,7 +97,7 @@ public class FXWorker extends Application {
 //        audioOptionsLabel.setFont(new Font("Arial",15));
 
         String[] audioCodecs = {"mp3","aac","ogg","opus","flac","alac","wav","aiff","24-bit wav","24-bit aiff"};
-        ComboBox aCodecList = new ComboBox(FXCollections.observableArrayList(audioCodecs));
+        aCodecList = new ComboBox(FXCollections.observableArrayList(audioCodecs));
         aCodecList.setPromptText("Select codec");
         aCodecList.setTranslateX(30);
         aCodecList.setTranslateY(230);
@@ -127,12 +145,12 @@ public class FXWorker extends Application {
         radioButton24Bit.setVisible(false);
 
 
-        ToggleGroup bitSampleGroup = new ToggleGroup();
+        bitSampleGroup = new ToggleGroup();
         radioButton16Bit.setToggleGroup(bitSampleGroup);
         radioButton24Bit.setToggleGroup(bitSampleGroup);
 
         String[] sampleRatesArray = {"44.1kHz","48kHz","88.2kHz","96kHz"};
-        ComboBox sampleRates = new ComboBox(FXCollections.observableArrayList(sampleRatesArray));
+        sampleRates = new ComboBox(FXCollections.observableArrayList(sampleRatesArray));
         sampleRates.setPromptText("Select sample rate");
         sampleRates.setTranslateX(30);
         sampleRates.setTranslateY(340);
@@ -206,7 +224,7 @@ public class FXWorker extends Application {
                     new FileChooser.ExtensionFilter("Video Files", "*.mov","*.mp4","*.mkv","*.avi","*.wmv","*.webm"),
                     new FileChooser.ExtensionFilter("Audio Files","*.mp3","*.m4a","*.aac","*.aif","*.aiff","*.wav","*.flac","*.wma","*.ogg","*.opus")
             );
-            File fileToConvert = fileChooser.showOpenDialog(finalStage);
+            fileToConvert = fileChooser.showOpenDialog(finalStage);
             if (fileToConvert != null) {
                 fileToConvertText.setText(fileToConvert.getAbsolutePath());
             }
@@ -230,10 +248,8 @@ public class FXWorker extends Application {
         openFFMPEG.setOnAction(actionEvent -> {
             DirectoryChooser ffmpegChooser = new DirectoryChooser();
             ffmpegChooser.setTitle("Open FFMPEG Directory");
-            File ffmpegDirectory = ffmpegChooser.showDialog(finalStage);
+            ffmpegDirectory = ffmpegChooser.showDialog(finalStage);
             if (ffmpegDirectory != null) {
-                String ffmpegValidator;
-                File ffmpegDirectoryValidator;
                 if (System.getProperty("os.name").contains("Windows")) {
                     ffmpegValidator = "ffmpeg.exe";
                 } else {
@@ -249,6 +265,7 @@ public class FXWorker extends Application {
                 }
             }
         });
+
 
         Group root = new Group(openFile,
                 fileToConvertText,
@@ -269,7 +286,8 @@ public class FXWorker extends Application {
                 radioButton16Bit,
                 radioButton24Bit,
                 sampleRates,
-                ffmpegNotDetected);
+                ffmpegNotDetected,
+                menuBar);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
@@ -287,5 +305,30 @@ public class FXWorker extends Application {
         System.out.println("System.getProperty(\"os.name\") reports:");
         System.out.println(operatingSys);
         launch(args);
+    }
+
+    public void fxToWorker(String pathToFF, String inputFile, String losslessBits, String audioSampleRate) {
+        String output = "/Users/paterson/Documents/dev/fxtest2";
+        String format = "mp4";
+        int channels = 2;
+        String audioCodec = aCodecList.getValue().toString();
+        audioCodec = switch (audioCodec) {
+            case "wav" -> "pcm_s16le";
+            case "aiff" -> "pcm_s16be";
+            case "24-bit wav" -> "pcm_s24le";
+            case "24-bit aiff" -> "pcm_s24be";
+            default -> audioCodec;
+        };
+        String extraArgs;
+        if (losslessBits != null) {
+            if (losslessBits.equals("24-bit")) {
+                extraArgs = "-sample_fmt s32p";
+            }
+        }
+
+        if (audioCodec.equals("mp3") || audioCodec.equals("aac") || audioCodec.equals("ogg") || audioCodec.equals("opus")) {
+            audioSampleRate = "48_000";
+        }
+        String bitSample = bitSampleGroup.getSelectedToggle().toString();
     }
 }

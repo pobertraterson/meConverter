@@ -35,11 +35,6 @@
       <artifactId>ffmpeg</artifactId>
       <version>0.8.0</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.google.guava</groupId>-->
-<!--      <artifactId>guava</artifactId>-->
-<!--      <version>33.3.1-jre</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
@@ -60,27 +55,22 @@
       <artifactId>javafx-base</artifactId>
       <version>21.0.6</version>
     </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx</artifactId>
-      <version>21.0.6</version>
-      <type>pom</type>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.openjfx</groupId>-->
+<!--      <artifactId>javafx</artifactId>-->
+<!--      <version>21.0.6</version>-->
+<!--      <type>pom</type>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
       <version>21.0.6</version>
     </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-web</artifactId>
-      <version>21.0.6</version>
-    </dependency>
-    <dependency>
-      <groupId>com.dlsc.formsfx</groupId>
-      <artifactId>formsfx-core</artifactId>
-      <version>11.6.0</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.openjfx</groupId>-->
+<!--      <artifactId>javafx-web</artifactId>-->
+<!--      <version>21.0.6</version>-->
+<!--    </dependency>-->
   </dependencies>
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
@@ -112,20 +102,20 @@
           </descriptorRefs>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.4.2</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>uk.co.mediumeffortmedia.Main</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-jar-plugin</artifactId>-->
+<!--        <version>3.4.2</version>-->
+<!--        <configuration>-->
+<!--          <archive>-->
+<!--            <manifest>-->
+<!--              <addClasspath>true</addClasspath>-->
+<!--              <classpathPrefix>lib/</classpathPrefix>-->
+<!--              <mainClass>uk.co.mediumeffortmedia.Main</mainClass>-->
+<!--            </manifest>-->
+<!--          </archive>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
 <!--      <plugin>-->
 <!--        <groupId>org.apache.maven.plugins</groupId>-->
 <!--        <artifactId>maven-compiler-plugin</artifactId>-->
