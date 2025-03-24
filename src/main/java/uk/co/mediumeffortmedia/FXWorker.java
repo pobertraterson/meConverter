@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.scene.control.*;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class FXWorker extends Application {
@@ -22,20 +23,17 @@ public class FXWorker extends Application {
     ComboBox vCodecList;
     ComboBox aCodecList;
     ToggleGroup bitSampleGroup;
+    Slider videoQualitySlider;
+    int sliderToInt;
+    TextField lossyCompressionBitrate;
 
     @Override
     public void start(Stage stage) {
 
-        ///  Mac specific code for menu bar
-//        if (System.getProperty("os.name").contains("Mac")) {
-//            System.setProperty("apple.laf.useScreenMenuBar", "true");
-//            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
-//        }
-
         MenuBar menuBar = new MenuBar();
         if (System.getProperty("os.name") != null && System.getProperty("os.name").startsWith("Mac")) {
             menuBar.useSystemMenuBarProperty().set(true);
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "meConverter");
+            System.setProperty("apple.awt.application.name", "My App");
         }
         Menu options = new Menu("Options");
         MenuItem ffmpegDownload = new MenuItem("Download FFMPEG");
@@ -74,7 +72,7 @@ public class FXWorker extends Application {
             }
         });
 
-        Slider videoQualitySlider = new Slider(0,30,20);
+        videoQualitySlider = new Slider(0,30,20);
         videoQualitySlider.setTranslateX(30);
         videoQualitySlider.setTranslateY(130);
         videoQualitySlider.setShowTickMarks(true);
@@ -92,8 +90,11 @@ public class FXWorker extends Application {
         vQuality.setTranslateX(180);
         vQuality.setTranslateY(130);
 
-        videoQualitySlider.valueProperty().addListener((observable, oldValue, newValue) -> vQuality.setText("Quality: " + newValue.intValue()));
+        videoQualitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 
+        vQuality.setText("Quality: " + newValue.intValue());
+        sliderToInt = (int) Math.round(newValue.doubleValue());
+        });
         /// Audio options section
         Label audioOptionsLabel = new Label("Audio options");
         audioOptionsLabel.setTranslateX(30);
@@ -118,8 +119,8 @@ public class FXWorker extends Application {
         audioQualityLabel.setTranslateY(280);
 
         /// Audio Options for lossy compression types
-        TextField lossyCompressionBitrate = new TextField();
-        lossyCompressionBitrate.setTextFormatter(new javafx.scene.control.TextFormatter<String>(
+        lossyCompressionBitrate = new TextField();
+        lossyCompressionBitrate.setTextFormatter(new TextFormatter<String>(
                 change -> {
                     // Only allow digits (0-9)
                     if (change.getText().matches("[0-9]*")) {
@@ -128,6 +129,7 @@ public class FXWorker extends Application {
                     return null; // Reject the change if it's not a digit
                 })
         );
+
         lossyCompressionBitrate.setTranslateX(30);
         lossyCompressionBitrate.setTranslateY(300);
         lossyCompressionBitrate.setPrefWidth(80);
@@ -162,6 +164,14 @@ public class FXWorker extends Application {
 
 
 
+//        bitSampleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+//            if (newToggle != null) {
+//                RadioButton selectedRadioButton = (RadioButton) newToggle;
+//                System.out.println("Selected: " + selectedRadioButton.getText());
+//            }
+//        });
+
+
         aCodecList.valueProperty().addListener((ChangeListener<String>) (observable, oldValue, newValue) -> {
             // switch statement for efficiency (I felt bad for using if/else over and over)
             if (newValue != null) {
@@ -176,6 +186,7 @@ public class FXWorker extends Application {
                         radioButton24Bit.setVisible(false);
                         sampleRates.setVisible(false);
                         audioCompressionType.setText(audioCompressionTypeNotes[0]);
+                        System.out.println(bitSampleGroup.getSelectedToggle());
                         break;
                     case "flac":
                     case "alac":
@@ -186,6 +197,7 @@ public class FXWorker extends Application {
                         radioButton16Bit.setDisable(false);
                         radioButton24Bit.setDisable(false);
                         sampleRates.setVisible(true);
+                        System.out.println(bitSampleGroup.getSelectedToggle());
                         audioCompressionType.setText(audioCompressionTypeNotes[1]);
                         break;
                     case "wav":
@@ -200,6 +212,7 @@ public class FXWorker extends Application {
                         radioButton24Bit.setDisable(true);
                         sampleRates.setVisible(true);
                         audioCompressionType.setText(audioCompressionTypeNotes[2]);
+                        System.out.println(bitSampleGroup.getSelectedToggle());
                         break;
                 }
             }
@@ -270,7 +283,18 @@ public class FXWorker extends Application {
             }
         });
 
+        Button convert = new Button("Convert file");
+        convert.setTranslateX(640);
+        convert.setTranslateY(300);
+        convert.setOnAction(actionEvent -> {
+            try {
+                fxToWorker();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
+        ///  actually shows the components needed for this to work.
         Group root = new Group(openFile,
                 fileToConvertText,
                 openFFMPEG,
@@ -291,7 +315,8 @@ public class FXWorker extends Application {
                 radioButton24Bit,
                 sampleRates,
                 ffmpegNotDetected,
-                menuBar);
+                menuBar,
+                convert);
         Scene scene = new Scene(root,1024,576);
         scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
@@ -311,28 +336,75 @@ public class FXWorker extends Application {
         launch(args);
     }
 
-    public void fxToWorker(String pathToFF, String inputFile, String losslessBits, String audioSampleRate) {
-        String output = "/Users/paterson/Documents/dev/fxtest2";
+    public void fxToWorker() throws IOException {
+        String output = "/Users/paterson/Documents/dev/fxtest2/output.mp4";
         String format = "mp4";
         int channels = 2;
-        String audioCodec = aCodecList.getValue().toString();
-        audioCodec = switch (audioCodec) {
-            case "wav" -> "pcm_s16le";
-            case "aiff" -> "pcm_s16be";
-            case "24-bit wav" -> "pcm_s24le";
-            case "24-bit aiff" -> "pcm_s24be";
-            default -> audioCodec;
-        };
-        String extraArgs;
-        if (losslessBits != null) {
-            if (losslessBits.equals("24-bit")) {
-                extraArgs = "-sample_fmt s32p";
+        System.out.println("Starting conversion.");
+
+        String ffmpegFullPath;
+        String ffprobeFullPath;
+        if (System.getProperty("os.name").contains("Windows")) {
+            ffmpegFullPath = ffmpegDirectory + "ffmpeg.exe";
+            ffprobeFullPath = ffmpegDirectory + "ffprobe.exe";
+            System.out.println(ffmpegFullPath);
+            System.out.println(ffprobeFullPath);
+        } else {
+            ffmpegFullPath = ffmpegDirectory + "/ffmpeg";
+            ffprobeFullPath = ffmpegDirectory + "/ffprobe";
+            System.out.println(ffmpegFullPath);
+            System.out.println(ffprobeFullPath);
+        }
+        String convertingFile;
+        if (fileToConvert != null) {
+            convertingFile = fileToConvert.getAbsolutePath();
+        }
+        int sampleRateForConversion;
+        int audioBitrate;
+        if (aCodecList.getValue().toString() != "mp3" || aCodecList.getValue().toString() != "aac" || aCodecList.getValue().toString() != "ogg" || aCodecList.getValue().toString() != "opus" && aCodecList != null) {
+            if (sampleRates.getValue().toString() != null) {
+                audioBitrate = 320;
+                if (sampleRates.equals("44.1kHz")) {
+                    sampleRateForConversion = 44_100;
+                } else if (sampleRates.equals("48kHz")) {
+                    sampleRateForConversion = 48_000;
+                } else if (sampleRates.equals("88.2kHz")) {
+                    sampleRateForConversion = 88_200;
+                } else if (sampleRates.equals("96kHz")) {
+                    sampleRateForConversion = 96_000;
+                }
+            }
+        } else if (aCodecList != null && (aCodecList.getValue().toString().equals("aac") || aCodecList.getValue().toString().equals("mp3") || aCodecList.getValue().toString().equals("ogg") || aCodecList.getValue().toString().equals("opus"))) {
+            sampleRateForConversion = 48_000;
+            if (lossyCompressionBitrate.getText() != null) {
+                audioBitrate = Integer.parseInt(String.valueOf(lossyCompressionBitrate));
+                if (audioBitrate < 64) {
+                    audioBitrate = 64;
+                } else if (audioBitrate > 320) {
+                    audioBitrate = 320;
+                }
+            } else {
+                audioBitrate = 256;
             }
         }
-
-        if (audioCodec.equals("mp3") || audioCodec.equals("aac") || audioCodec.equals("ogg") || audioCodec.equals("opus")) {
-            audioSampleRate = "48_000";
+        String sampleBitArg;
+        if (aCodecList.getValue().toString().equals("flac")) {
+            if (bitSampleGroup.getSelectedToggle().toString() != null) {
+                if (bitSampleGroup.getSelectedToggle().toString().contains("16-bit")) {
+                    sampleBitArg = "sample_fmt=s16";
+                } else if (bitSampleGroup.getSelectedToggle().toString().contains("24-bit")) {
+                    sampleBitArg = "sample_fmt=s32";
+                }
+            }
+        } else if (aCodecList.getValue().toString().equals("alac")) {
+            if (bitSampleGroup.getSelectedToggle().toString() != null) {
+                if (bitSampleGroup.getSelectedToggle().toString().contains("16-bit")) {
+                    sampleBitArg = "sample_fmt=s16p";
+                } else if (bitSampleGroup.getSelectedToggle().toString().contains("24-bit")) {
+                    sampleBitArg = "sample_fmt=s32p";
+                }
+            }
         }
-        String bitSample = bitSampleGroup.getSelectedToggle().toString();
+        System.out.println("Video quality is set to:" + sliderToInt);
     }
 }
