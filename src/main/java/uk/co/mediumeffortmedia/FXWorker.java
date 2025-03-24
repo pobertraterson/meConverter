@@ -345,8 +345,8 @@ public class FXWorker extends Application {
         String ffmpegFullPath;
         String ffprobeFullPath;
         if (System.getProperty("os.name").contains("Windows")) {
-            ffmpegFullPath = ffmpegDirectory + "ffmpeg.exe";
-            ffprobeFullPath = ffmpegDirectory + "ffprobe.exe";
+            ffmpegFullPath = ffmpegDirectory + "\\ffmpeg.exe";
+            ffprobeFullPath = ffmpegDirectory + "\\ffprobe.exe";
             System.out.println(ffmpegFullPath);
             System.out.println(ffprobeFullPath);
         } else {
@@ -356,11 +356,10 @@ public class FXWorker extends Application {
             System.out.println(ffprobeFullPath);
         }
         String convertingFile;
-        if (fileToConvert != null) {
-            convertingFile = fileToConvert.getAbsolutePath();
-        }
+        convertingFile = fileToConvert.getAbsolutePath();
         int sampleRateForConversion;
         int audioBitrate;
+        String aCodec;
         if (aCodecList.getValue().toString() != "mp3" || aCodecList.getValue().toString() != "aac" || aCodecList.getValue().toString() != "ogg" || aCodecList.getValue().toString() != "opus" && aCodecList != null) {
             if (sampleRates.getValue().toString() != null) {
                 audioBitrate = 320;
@@ -387,6 +386,7 @@ public class FXWorker extends Application {
                 audioBitrate = 256;
             }
         }
+        aCodec = aCodecList.getValue().toString();
         String sampleBitArg;
         if (aCodecList.getValue().toString().equals("flac")) {
             if (bitSampleGroup.getSelectedToggle().toString() != null) {
@@ -406,5 +406,7 @@ public class FXWorker extends Application {
             }
         }
         System.out.println("Video quality is set to:" + sliderToInt);
+
+//        FFMPEGWorker.worker(ffmpegFullPath,ffprobeFullPath,convertingFile,output,format,channels,aCodec,sampleRateForConversion,)
     }
 }
