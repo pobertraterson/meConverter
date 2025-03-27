@@ -334,7 +334,7 @@ public class FXWorker extends Application {
                 menuBar,
                 convert);
         Scene scene = new Scene(root,1024,576);
-        scene.getStylesheets().add("/uk/co/mediumeffortmedia/theming.css");
+        scene.getStylesheets().add(getClass().getResource("theming.css").toExternalForm());
         scene.getStylesheets().add(String.valueOf(getClass().getResource("theming.css")));
         stage = new Stage();
         stage.setScene(scene);

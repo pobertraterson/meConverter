@@ -1,3 +1,10 @@
-.root {
-    -fx-font-family: "Arial";
+@font-face {
+    font-family: "Roboto";
+    src: url("Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+}
+
+* {
+    -fx-font-family: "Roboto";
+    -fx-font-weight: normal;
+    -fx-font-style: normal;
 }

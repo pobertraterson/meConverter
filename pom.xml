@@ -130,5 +130,14 @@
         </configuration>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.css</include>
+          <include>**/*.ttf</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 </project>
