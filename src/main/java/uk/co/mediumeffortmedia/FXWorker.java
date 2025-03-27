@@ -55,6 +55,7 @@ public class FXWorker extends Application {
         vCodecList.setPromptText("Select codec");
         vCodecList.setTranslateX(30);
         vCodecList.setTranslateY(80);
+        vCodecList.setDisable(true);
 
         Label bestFor = new Label();
         bestFor.setTranslateX(30);
@@ -81,6 +82,7 @@ public class FXWorker extends Application {
         videoQualitySlider.setSnapToTicks(true);
         videoQualitySlider.setMajorTickUnit(1);
         videoQualitySlider.setMinorTickCount(0);
+        videoQualitySlider.setDisable(true);
 
         Label vQualitySliderWarning = new Label("Lower number means better quality");
         vQualitySliderWarning.setTranslateX(30);
@@ -106,6 +108,7 @@ public class FXWorker extends Application {
         aCodecList.setPromptText("Select codec");
         aCodecList.setTranslateX(30);
         aCodecList.setTranslateY(230);
+        aCodecList.setDisable(true);
 
 
         String[] audioCompressionTypeNotes = {"Lossy compression, lower quality","Lossless compression, higher quality","Uncompressed, high quality"};
@@ -228,6 +231,18 @@ public class FXWorker extends Application {
         fileToConvertText.setTranslateY(100);
         fileToConvertText.setEditable(false);
 
+        Button convert = new Button("Convert file");
+        convert.setTranslateX(640);
+        convert.setTranslateY(300);
+        convert.setOnAction(actionEvent -> {
+//            try {
+//                fxToWorker();
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+        });
+        convert.setDisable(true);
+
 
         Button openFile = new Button();
         openFile.setText("Open File");
@@ -244,6 +259,12 @@ public class FXWorker extends Application {
             fileToConvert = fileChooser.showOpenDialog(finalStage);
             if (fileToConvert != null) {
                 fileToConvertText.setText(fileToConvert.getAbsolutePath());
+                if (ffmpegDirectoryValidator.exists()) {
+                    vCodecList.setDisable(false);
+                    aCodecList.setDisable(false);
+                    videoQualitySlider.setDisable(false);
+                    convert.setDisable(false);
+                }
             }
         });
 
@@ -276,21 +297,16 @@ public class FXWorker extends Application {
                 if (ffmpegDirectoryValidator.exists()) {
                     ffmpegPathTextBox.setText(ffmpegDirectory.getAbsolutePath());
                     ffmpegNotDetected.setVisible(false);
+                    if (fileToConvert != null) {
+                        vCodecList.setDisable(false);
+                        aCodecList.setDisable(false);
+                        videoQualitySlider.setDisable(false);
+                        convert.setDisable(false);
+                    }
                 } else {
                     System.out.println("ffmpeg executable not detected in directory.");
                     ffmpegNotDetected.setVisible(true);
                 }
-            }
-        });
-
-        Button convert = new Button("Convert file");
-        convert.setTranslateX(640);
-        convert.setTranslateY(300);
-        convert.setOnAction(actionEvent -> {
-            try {
-                fxToWorker();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         });
 
@@ -334,79 +350,5 @@ public class FXWorker extends Application {
         System.out.println("System.getProperty(\"os.name\") reports:");
         System.out.println(operatingSys);
         launch(args);
-    }
-
-    public void fxToWorker() throws IOException {
-        String output = "/Users/paterson/Documents/dev/fxtest2/output.mp4";
-        String format = "mp4";
-        int channels = 2;
-        System.out.println("Starting conversion.");
-
-        String ffmpegFullPath;
-        String ffprobeFullPath;
-        if (System.getProperty("os.name").contains("Windows")) {
-            ffmpegFullPath = ffmpegDirectory + "\\ffmpeg.exe";
-            ffprobeFullPath = ffmpegDirectory + "\\ffprobe.exe";
-            System.out.println(ffmpegFullPath);
-            System.out.println(ffprobeFullPath);
-        } else {
-            ffmpegFullPath = ffmpegDirectory + "/ffmpeg";
-            ffprobeFullPath = ffmpegDirectory + "/ffprobe";
-            System.out.println(ffmpegFullPath);
-            System.out.println(ffprobeFullPath);
-        }
-        String convertingFile;
-        convertingFile = fileToConvert.getAbsolutePath();
-        int sampleRateForConversion;
-        int audioBitrate;
-        String aCodec;
-        if (aCodecList.getValue().toString() != "mp3" || aCodecList.getValue().toString() != "aac" || aCodecList.getValue().toString() != "ogg" || aCodecList.getValue().toString() != "opus" && aCodecList != null) {
-            if (sampleRates.getValue().toString() != null) {
-                audioBitrate = 320;
-                if (sampleRates.equals("44.1kHz")) {
-                    sampleRateForConversion = 44_100;
-                } else if (sampleRates.equals("48kHz")) {
-                    sampleRateForConversion = 48_000;
-                } else if (sampleRates.equals("88.2kHz")) {
-                    sampleRateForConversion = 88_200;
-                } else if (sampleRates.equals("96kHz")) {
-                    sampleRateForConversion = 96_000;
-                }
-            }
-        } else if (aCodecList != null && (aCodecList.getValue().toString().equals("aac") || aCodecList.getValue().toString().equals("mp3") || aCodecList.getValue().toString().equals("ogg") || aCodecList.getValue().toString().equals("opus"))) {
-            sampleRateForConversion = 48_000;
-            if (lossyCompressionBitrate.getText() != null) {
-                audioBitrate = Integer.parseInt(String.valueOf(lossyCompressionBitrate));
-                if (audioBitrate < 64) {
-                    audioBitrate = 64;
-                } else if (audioBitrate > 320) {
-                    audioBitrate = 320;
-                }
-            } else {
-                audioBitrate = 256;
-            }
-        }
-        aCodec = aCodecList.getValue().toString();
-        String sampleBitArg;
-        if (aCodecList.getValue().toString().equals("flac")) {
-            if (bitSampleGroup.getSelectedToggle().toString() != null) {
-                if (bitSampleGroup.getSelectedToggle().toString().contains("16-bit")) {
-                    sampleBitArg = "sample_fmt=s16";
-                } else if (bitSampleGroup.getSelectedToggle().toString().contains("24-bit")) {
-                    sampleBitArg = "sample_fmt=s32";
-                }
-            }
-        } else if (aCodecList.getValue().toString().equals("alac")) {
-            if (bitSampleGroup.getSelectedToggle().toString() != null) {
-                if (bitSampleGroup.getSelectedToggle().toString().contains("16-bit")) {
-                    sampleBitArg = "sample_fmt=s16p";
-                } else if (bitSampleGroup.getSelectedToggle().toString().contains("24-bit")) {
-                    sampleBitArg = "sample_fmt=s32p";
-                }
-            }
-        }
-        System.out.println("Video quality is set to:" + sliderToInt);
-
-//        FFMPEGWorker.worker(ffmpegFullPath,ffprobeFullPath,convertingFile,output,format,channels,aCodec,sampleRateForConversion,)
     }
 }
