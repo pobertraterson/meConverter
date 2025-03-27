@@ -34,4 +34,6 @@ mvn
 ```
 the directory containing pom.xml.
 
+Requires FFMPEG. Option to download from website is included in app under "Options".
+
 Made with love by the team (Medium Effort Solutions)
