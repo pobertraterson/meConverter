@@ -18,7 +18,7 @@ public class FXWorker extends Application {
     String ffmpegValidator;
     File ffmpegDirectoryValidator;
     File ffmpegDirectory;
-    File fileToConvert;
+    static File fileToConvert;
     ComboBox sampleRates;
     ComboBox vCodecList;
     ComboBox aCodecList;
@@ -26,6 +26,7 @@ public class FXWorker extends Application {
     Slider videoQualitySlider;
     int sliderToInt;
     TextField lossyCompressionBitrate;
+    Button convert;
 
     @Override
     public void start(Stage stage) {
@@ -103,7 +104,7 @@ public class FXWorker extends Application {
         audioOptionsLabel.setTranslateY(200);
 //        audioOptionsLabel.setFont(new Font("Arial",15));
 
-        String[] audioCodecs = {"mp3","aac","ogg","opus","flac","alac","wav","aiff","24-bit wav","24-bit aiff"};
+        String[] audioCodecs = {"mp3","aac","ogg","opus","wav","aiff","24-bit wav","24-bit aiff"};
         aCodecList = new ComboBox(FXCollections.observableArrayList(audioCodecs));
         aCodecList.setPromptText("Select codec");
         aCodecList.setTranslateX(30);
@@ -132,6 +133,11 @@ public class FXWorker extends Application {
                     return null; // Reject the change if it's not a digit
                 })
         );
+        lossyCompressionBitrate.textProperty().addListener((observable,oldValue,newValue) -> {
+            if (vCodecList != null && aCodecList != null) {
+                convert.setDisable(false);
+            }
+        });
 
         lossyCompressionBitrate.setTranslateX(30);
         lossyCompressionBitrate.setTranslateY(300);
@@ -164,7 +170,11 @@ public class FXWorker extends Application {
         sampleRates.setTranslateX(30);
         sampleRates.setTranslateY(340);
         sampleRates.setVisible(false);
-
+        sampleRates.valueProperty().addListener((ChangeListener<String>) (observable, oldValue, newValue) -> {
+            if (vCodecList != null && aCodecList != null) {
+                convert.setDisable(false);
+            }
+        });
 
 
 //        bitSampleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
@@ -190,19 +200,22 @@ public class FXWorker extends Application {
                         sampleRates.setVisible(false);
                         audioCompressionType.setText(audioCompressionTypeNotes[0]);
                         System.out.println(bitSampleGroup.getSelectedToggle());
+                        if (vCodecList != null && lossyCompressionBitrate != null) {
+                            convert.setDisable(false);
+                        }
                         break;
-                    case "flac":
-                    case "alac":
-                        audioBitrateLabel.setVisible(false);
-                        lossyCompressionBitrate.setVisible(false);
-                        radioButton16Bit.setVisible(true);
-                        radioButton24Bit.setVisible(true);
-                        radioButton16Bit.setDisable(false);
-                        radioButton24Bit.setDisable(false);
-                        sampleRates.setVisible(true);
-                        System.out.println(bitSampleGroup.getSelectedToggle());
-                        audioCompressionType.setText(audioCompressionTypeNotes[1]);
-                        break;
+//                    case "flac":
+//                    case "alac":
+//                        audioBitrateLabel.setVisible(false);
+//                        lossyCompressionBitrate.setVisible(false);
+//                        radioButton16Bit.setVisible(true);
+//                        radioButton24Bit.setVisible(true);
+//                        radioButton16Bit.setDisable(false);
+//                        radioButton24Bit.setDisable(false);
+//                        sampleRates.setVisible(true);
+//                        System.out.println(bitSampleGroup.getSelectedToggle());
+//                        audioCompressionType.setText(audioCompressionTypeNotes[1]);
+//                        break;
                     case "wav":
                     case "aiff":
                     case "24-bit wav":
@@ -216,6 +229,9 @@ public class FXWorker extends Application {
                         sampleRates.setVisible(true);
                         audioCompressionType.setText(audioCompressionTypeNotes[2]);
                         System.out.println(bitSampleGroup.getSelectedToggle());
+                        if (vCodecList != null && sampleRates != null) {
+                            convert.setDisable(false);
+                        }
                         break;
                 }
             }
@@ -231,7 +247,7 @@ public class FXWorker extends Application {
         fileToConvertText.setTranslateY(100);
         fileToConvertText.setEditable(false);
 
-        Button convert = new Button("Convert file");
+        convert = new Button("Convert file");
         convert.setTranslateX(640);
         convert.setTranslateY(300);
         convert.setOnAction(actionEvent -> {
@@ -263,7 +279,6 @@ public class FXWorker extends Application {
                     vCodecList.setDisable(false);
                     aCodecList.setDisable(false);
                     videoQualitySlider.setDisable(false);
-                    convert.setDisable(false);
                 }
             }
         });
@@ -301,7 +316,6 @@ public class FXWorker extends Application {
                         vCodecList.setDisable(false);
                         aCodecList.setDisable(false);
                         videoQualitySlider.setDisable(false);
-                        convert.setDisable(false);
                     }
                 } else {
                     System.out.println("ffmpeg executable not detected in directory.");

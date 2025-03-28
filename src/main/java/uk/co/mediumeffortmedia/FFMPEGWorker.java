@@ -6,14 +6,14 @@ import net.bramp.ffmpeg.FFmpegExecutor;
 import java.io.IOException;
 
 public class FFMPEGWorker {
-    public static void worker(String ffmpegPath, String ffprobePath, String inputPath, String output, String format, int audioChannels, String audioCodec, int audioSampleRate, String videoCodec, int frameRate, int audioBitrate, int resolutionH, int resolutionW, String extraArgs) throws IOException {
+    public static void worker(String ffmpegPath, String ffprobePath) throws IOException {
         System.out.println("The Medium Effort Converter:meConverter");
 
         FFmpeg ffmpeg = new FFmpeg(ffmpegPath);
         FFprobe ffprobe = new FFprobe(ffprobePath);
 
         FFmpegBuilder builder = new FFmpegBuilder()
-                .setInput(inputPath)
+                .setInput(FXWorker.fileToConvert.getAbsolutePath().toString())
                 .overrideOutputFiles(true)
 
                 .addOutput(output)
@@ -23,9 +23,9 @@ public class FFMPEGWorker {
                 .setAudioSampleRate(audioSampleRate)
                 .setAudioBitRate(audioBitrate)
                 .setVideoCodec(videoCodec)
-                .setVideoFrameRate(frameRate, 1)
+                .setVideoFrameRate(25, 1)
                 .setVideoResolution(resolutionW,resolutionH)
-                .addExtraArgs(extraArgs)
+
 
                 .done();
 
